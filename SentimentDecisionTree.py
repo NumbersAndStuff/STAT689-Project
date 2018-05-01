@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import spacy
-from __future__ import unicode_literals
+#import spacy
 import ast # this is just use to evaluate the lemmas
 import time
 from sklearn.tree import DecisionTreeClassifier
@@ -17,10 +16,10 @@ class DecisionTree:
     vectorizer  = TfidfVectorizer()
     randomForest = RandomForestClassifier()
     ts_test = []
-    trainingSet = pd.read_csv("train_parsed.csv", index_col=0, encoding='latin-1', header=0)
+    trainingSet = pd.read_csv("training_parsed.csv", index_col=0, encoding='latin-1', header=0)
     tweets = pd.read_csv("tweets_parsed.csv", low_memory=False, index_col=0, dtype='object')
 
-    def DataSets(self, trainingSet, tweets):
+    def DataSets(self):
     
         tsTrain = trainingSet[:90000]
         tsTest = trainingSet[~trainingSet.ItemID.isin(tsTrain.ItemID)]
@@ -49,7 +48,7 @@ class DecisionTree:
         return decisionTree
         
     
-    def Tree(self, xTweet, decisionTree):
+    def Tree(self, xTweet):
                 
         predictTweets = decisionTree.predict(xTweet)
         tweetProb = decisionTree.predict_proba(xTweet) # <- not using this, here in case we want it
@@ -63,12 +62,12 @@ class DecisionTree:
         accuracy = accuracy_score(yTest,randomForestPrediction)
         
         print(classification_report(xTest, randomForestPrediction))
-        print(f'Out-of-bag score estimate: {rf.oob_score_:.3}')
-        print(f'Mean accuracy score: {accuracy:.3}')
+        #print(f'Out-of-bag score estimate: {rf.oob_score_:.3}')
+        #print(f'Mean accuracy score: {accuracy:.3}')
     
         return randomForest
 
-    def Forest(self, xTweet, randomForest):
+    def Forest(self, xTweet):
     
         forestPredictTweets = randomForest.predict(xTweet)
         # this function returns an array that has the tweet sentiement in order
