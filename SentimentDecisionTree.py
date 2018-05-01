@@ -18,7 +18,7 @@ ts_test = []
 trainingSet = pd.read_csv("train_parsed.csv", index_col=0, encoding='latin-1', header=0)
 tweets = pd.read_csv("tweets_parsed.csv", low_memory=False, index_col=0, dtype='object')
 
-def DataSets(trainingSet,tweets):
+def DataSets():
     
     tsTrain = trainingSet[:90000]
     tsTest = trainingSet[~trainingSet.ItemID.isin(tsTrain.ItemID)]
@@ -46,7 +46,7 @@ def TrainDecisionTree(xTrain,yTrain,xTest,yTest):
     return decisionTree
         
     
-def Tree(xTweet, decisionTree):
+def Tree(xTweet):
     
     predictTweets = decisionTree.predict(xTweet)
     tweetProb = decisionTree.predict_proba(xTweet) # <- not using this, here in case we want it
@@ -65,7 +65,7 @@ def TrainForest(xTrain,yTrain,xTest,yTest):
     
     return randomForest
 
-def Forest(xTweet, randomForest):
+def Forest(xTweet):
     
     forestPredictTweets = randomForest.predict(xTweet)
     # this function returns an array that has the tweet sentiement in order
