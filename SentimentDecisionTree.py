@@ -67,10 +67,10 @@ def TrainForest(xTrain,yTrain,xTest,yTest):
 
 def Forest(xTweet, randomForest):
     
-        forestPredictTweets = randomForest.predict(xTweet)
-        # this function returns an array that has the tweet sentiement in order
-        # Can be appended to the original tweet dataframe for further analysis
-        return forestPredictTweets
+    forestPredictTweets = randomForest.predict(xTweet)
+    # this function returns an array that has the tweet sentiement in order
+    # Can be appended to the original tweet dataframe for further analysis
+    return forestPredictTweets
     
     
 ## Get to the below if we have time, it explores feature space
