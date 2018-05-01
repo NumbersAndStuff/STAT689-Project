@@ -11,61 +11,64 @@ from sklearn.metrics import classification_report, accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 
 
-decisionTree = DecisionTreeClassifier()
-vectorizer  = TfidfVectorizer()
-randomForest = RandomForestClassifier()
-ts_test = []
-trainingSet = pd.read_csv("train_parsed.csv", index_col=0, encoding='latin-1', header=0)
-tweets = pd.read_csv("tweets_parsed.csv", low_memory=False, index_col=0, dtype='object')
-
-def DataSets(trainingSet,tweets):
+class DecisionTree:
     
-    tsTrain = trainingSet[:90000]
-    tsTest = trainingSet[~trainingSet.ItemID.isin(tsTrain.ItemID)]
-    xTrain = vectorizer.fit_transform(tsTrain.lemma.astype('unicode')) 
-    xTest = vectorizer.transform(tsTest.lemma.astype('unicode')) 
-    yTrain,yTest = tsTrain['Sentiment'], tsTest['Sentiment']
-    xTweet = vectorizer.transform(tweets.lemma.astype('unicode'))
-    return xTrain, yTrain, xTest, yTest, xTweet
+    decisionTree = DecisionTreeClassifier()
+    vectorizer  = TfidfVectorizer()
+    randomForest = RandomForestClassifier()
+    ts_test = []
+    trainingSet = pd.read_csv("train_parsed.csv", index_col=0, encoding='latin-1', header=0)
+    tweets = pd.read_csv("tweets_parsed.csv", low_memory=False, index_col=0, dtype='object')
 
-
-def TrainDecisionTree(xTrain,yTrain,xTest,yTest):
-    ## Classifications are under Sentiment: 0=neg and 1=pos
-    ## SetimentText==Tweets    
-    t0 = time.time()
-    decisionTree = decisionTree.fit(xTrain,yTrain)
+    def DataSets(self, trainingSet, tweets):
     
-    t1 = time.time()
-    testPrediction = decisionTree.predict(xTest)
-    t2 = time.time()
-    print('Time taken to train '+str(t1-t0))
-    print('Time taken to predict '+str(t2-t1))
+        tsTrain = trainingSet[:90000]
+        tsTest = trainingSet[~trainingSet.ItemID.isin(tsTrain.ItemID)]
+        xTrain = vectorizer.fit_transform(tsTrain.lemma.astype('unicode')) 
+        xTest = vectorizer.transform(tsTest.lemma.astype('unicode')) 
+        yTrain,yTest = tsTrain['Sentiment'], tsTest['Sentiment']
+        xTweet = vectorizer.transform(tweets.lemma.astype('unicode'))
+        
+        return xTrain, yTrain, xTest, yTest, xTweet
 
-    print(classification_report(yTest, testPrediction))
-    
-    return decisionTree
+
+    def TrainDecisionTree(self, xTrain, yTrain, xTest, yTest):
+        ## Classifications are under Sentiment: 0=neg and 1=pos
+        ## SetimentText==Tweets    
+        t0 = time.time()
+        decisionTree = decisionTree.fit(xTrain,yTrain)
+            
+        t1 = time.time()
+        testPrediction = decisionTree.predict(xTest)
+        t2 = time.time()
+        print('Time taken to train '+str(t1-t0))
+        print('Time taken to predict '+str(t2-t1))
+            
+        print(classification_report(yTest, testPrediction))
+            
+        return decisionTree
         
     
-def Tree(xTweet, decisionTree):
-    
-    predictTweets = decisionTree.predict(xTweet)
-    tweetProb = decisionTree.predict_proba(xTweet) # <- not using this, here in case we want it
-    return predictTweets
+    def Tree(self, xTweet, decisionTree):
+                
+        predictTweets = decisionTree.predict(xTweet)
+        tweetProb = decisionTree.predict_proba(xTweet) # <- not using this, here in case we want it
+        return predictTweets
 
 
-def TrainForest(xTrain,yTrain,xTest,yTest):
-    randomForest = RandomForestClassifier(n_estimators=100, oob_score=True, random_state=123456)
-    randomForest.fit(xTrain,yTrain)
-    randomForestPrediction = randomForest.predict(xTest)
-    accuracy = accuracy_score(yTest,randomForestPrediction)
+    def TrainForest(self, xTrain,yTrain,xTest,yTest):
+        randomForest = RandomForestClassifier(n_estimators=100, oob_score=True, random_state=123456)
+        randomForest.fit(xTrain,yTrain)
+        randomForestPrediction = randomForest.predict(xTest)
+        accuracy = accuracy_score(yTest,randomForestPrediction)
+        
+        print(classification_report(xTest, randomForestPrediction))
+        print(f'Out-of-bag score estimate: {rf.oob_score_:.3}')
+        print(f'Mean accuracy score: {accuracy:.3}')
     
-    print(classification_report(xTest, randomForestPrediction))
-    print(f'Out-of-bag score estimate: {rf.oob_score_:.3}')
-    print(f'Mean accuracy score: {accuracy:.3}')
-    
-    return randomForest
+        return randomForest
 
-def Forest(xTweet, randomForest):
+    def Forest(self, xTweet, randomForest):
     
         forestPredictTweets = randomForest.predict(xTweet)
         # this function returns an array that has the tweet sentiement in order
