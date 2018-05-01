@@ -18,7 +18,7 @@ ts_test = []
 trainingSet = pd.read_csv("train_parsed.csv", index_col=0, encoding='latin-1', header=0)
 tweets = pd.read_csv("tweets_parsed.csv", low_memory=False, index_col=0, dtype='object')
 
-def DataSets():
+def DataSets(trainingSet,tweets):
     
     tsTrain = trainingSet[:90000]
     tsTest = trainingSet[~trainingSet.ItemID.isin(tsTrain.ItemID)]
@@ -46,7 +46,7 @@ def TrainDecisionTree(xTrain,yTrain,xTest,yTest):
     return decisionTree
         
     
-def Tree(xTweet):
+def Tree(xTweet, decisionTree):
     
     predictTweets = decisionTree.predict(xTweet)
     tweetProb = decisionTree.predict_proba(xTweet) # <- not using this, here in case we want it
@@ -65,12 +65,12 @@ def TrainForest(xTrain,yTrain,xTest,yTest):
     
     return randomForest
 
-def Forest(xTweet):
+def Forest(xTweet, randomForest):
     
-    forestPredictTweets = randomForest.predict(xTweet)
-    # this function returns an array that has the tweet sentiement in order
-    # Can be appended to the original tweet dataframe for further analysis
-    return forestPredictTweets
+        forestPredictTweets = randomForest.predict(xTweet)
+        # this function returns an array that has the tweet sentiement in order
+        # Can be appended to the original tweet dataframe for further analysis
+        return forestPredictTweets
     
     
 ## Get to the below if we have time, it explores feature space
